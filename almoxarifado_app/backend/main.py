@@ -147,4 +147,28 @@ def buscar_almoxarifado(id:int):
 
     return {"nome": resultado[0]}
 
+@app.post("/enviar-movimentacoes")
+def enviar_movimentacoes(movs: list):
+
+    # AQUI você enviará para o RPA
+    # exemplo fictício
+
+    # requests.post("http://ip-do-rpa/api", json=movs)
+
+    historico = []
+
+    for m in movs:
+        historico.append({
+            "produto_id": m["produto_id"],
+            "produto": m["produto"],
+            "quantidade": m["quantidade"],
+            "movimentacao": m["movimentacao"],
+            "origem": m["origem"],
+            "destino": m["destino"],
+            "observacoes": m["observacoes"],
+            "data": m["data"]
+        })
+
+    return historico
+
 app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")

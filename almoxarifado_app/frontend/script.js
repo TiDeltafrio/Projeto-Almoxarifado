@@ -97,24 +97,10 @@ document.getElementById("tituloPagina").innerText = "Histórico";
 document.getElementById("btnPDF").style.display = "inline-block";
 document.getElementById("btnEnviar").style.display = "none";
 
-try{
-
-const resposta = await fetch("/historico");
-const dados = await resposta.json();
-
-historico = dados;
+/* não busca API */
+/* mostra apenas retorno do RPA */
 
 render();
-
-}catch(erro){
-
-console.error(erro);
-
-historico = [];
-
-render();
-
-}
 
 }
 
@@ -179,19 +165,21 @@ return;
 
 try{
 
-for(let mov of movimentacoes){
-
-await fetch("/movimentacao",{
+const resposta = await fetch("/enviar-movimentacoes",{
 
 method:"POST",
 headers:{ "Content-Type":"application/json" },
-body: JSON.stringify(mov)
+body: JSON.stringify(movimentacoes)
 
 });
 
-}
+const dados = await resposta.json();
 
-alert("Movimentações enviadas com sucesso!");
+/* retorno do RPA vira histórico */
+
+historico = dados;
+
+/* limpa movimentações locais */
 
 movimentacoes = [];
 
@@ -199,10 +187,11 @@ localStorage.removeItem("movimentacoes");
 
 render();
 
+alert("Movimentações enviadas com sucesso!");
+
 }catch(erro){
 
 console.error(erro);
-
 alert("Erro ao enviar movimentações");
 
 }
@@ -210,3 +199,168 @@ alert("Erro ao enviar movimentações");
 }
 
 mostrarMovimentacoes();
+
+async function buscarProduto(){
+
+const id = document.getElementById("produto_id").value;
+
+if(!id) return;
+
+try{
+
+const resposta = await fetch(`/produto/${id}`);
+
+if(!resposta.ok){
+document.getElementById("produto").value = "";
+alert("Produto não encontrado");
+return;
+}
+
+const dados = await resposta.json();
+
+document.getElementById("produto").value = dados.descricao;
+
+}catch(erro){
+
+console.error(erro);
+alert("Erro ao buscar produto");
+
+}
+
+}
+
+async function buscarOrigem(){
+
+const id = document.getElementById("origem_id").value;
+
+if(!id) return;
+
+try{
+
+const resposta = await fetch(`/almoxarifado/${id}`);
+
+if(!resposta.ok){
+document.getElementById("origem").value = "";
+return;
+}
+
+const dados = await resposta.json();
+
+document.getElementById("origem").value = dados.nome;
+
+}catch(erro){
+
+console.error(erro);
+
+}
+
+}
+
+async function buscarDestino(){
+
+const id = document.getElementById("destino_id").value;
+
+if(!id) return;
+
+try{
+
+const resposta = await fetch(`/almoxarifado/${id}`);
+
+if(!resposta.ok){
+document.getElementById("destino").value = "";
+return;
+}
+
+const dados = await resposta.json();
+
+document.getElementById("destino").value = dados.nome;
+
+}catch(erro){
+
+console.error(erro);
+
+}
+
+}
+
+async function buscarProduto(){
+
+const id = document.getElementById("produto_id").value;
+
+if(!id) return;
+
+try{
+
+const resposta = await fetch(`/produto/${id}`);
+
+if(!resposta.ok){
+document.getElementById("produto").value = "";
+alert("Produto não encontrado");
+return;
+}
+
+const dados = await resposta.json();
+
+document.getElementById("produto").value = dados.descricao;
+
+}catch(erro){
+
+console.error("Erro ao buscar produto:", erro);
+
+}
+
+}
+
+async function buscarOrigem(){
+
+const id = document.getElementById("origem_id").value;
+
+if(!id) return;
+
+try{
+
+const resposta = await fetch(`/almoxarifado/${id}`);
+
+if(!resposta.ok){
+document.getElementById("origem").value = "";
+return;
+}
+
+const dados = await resposta.json();
+
+document.getElementById("origem").value = dados.nome;
+
+}catch(erro){
+
+console.error("Erro origem:", erro);
+
+}
+
+}
+
+async function buscarDestino(){
+
+const id = document.getElementById("destino_id").value;
+
+if(!id) return;
+
+try{
+
+const resposta = await fetch(`/almoxarifado/${id}`);
+
+if(!resposta.ok){
+document.getElementById("destino").value = "";
+return;
+}
+
+const dados = await resposta.json();
+
+document.getElementById("destino").value = dados.nome;
+
+}catch(erro){
+
+console.error("Erro destino:", erro);
+
+}
+
+}
