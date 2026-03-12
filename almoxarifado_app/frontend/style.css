@@ -10,10 +10,11 @@ height:100vh;
 }
 
 .sidebar{
-width:220px;
+width:200px;
 background:#2c3e50;
 color:white;
 padding:20px;
+position:relative;
 }
 
 .sidebar ul{
@@ -76,6 +77,7 @@ box-shadow:0 3px 10px rgba(0,0,0,0.08);
 table{
 width:100%;
 border-collapse:collapse;
+table-layout:fixed;
 }
 
 thead{
@@ -86,6 +88,7 @@ color:white;
 th,td{
 padding:12px;
 text-align:left;
+vertical-align:middle;
 }
 
 tbody tr{
@@ -125,6 +128,27 @@ display:flex;
 gap:10px;
 }
 
+<<<<<<< HEAD
 #movimentacao{
 color:#888;
+=======
+<<<<<<< HEAD
+#movimentacao{
+color:#888;
+=======
+/* LOGO DELTAFRIO */
+
+.logo-empresa{
+position:absolute;
+bottom:20px;
+left:0;
+width:100%;
+text-align:center;
+}
+
+.logo-empresa img{
+width:120px;
+opacity:0.9;
+>>>>>>> 2fc2177fe66bfeeed624757c7f51e86771676a03
+>>>>>>> bbae5fb4b06e3cff6896798fe4aa1670468386fb
 }
