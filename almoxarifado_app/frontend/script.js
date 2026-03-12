@@ -4,22 +4,17 @@ let historico = [];
 
 let pagina = "movimentacoes";
 
-function abrirModal() {
-
+function abrirModal(){
 document.getElementById("modal").style.display = "flex";
-
 }
 
-function fecharModal() {
-
+function fecharModal(){
 document.getElementById("modal").style.display = "none";
-
 }
 
 async function buscarProduto(){
 
 const id = document.getElementById("produto_id").value;
-
 if(!id) return;
 
 try{
@@ -27,21 +22,16 @@ try{
 const resposta = await fetch(`/produto/${id}`);
 
 if(!resposta.ok){
-
 document.getElementById("produto").value="";
 alert("Produto não encontrado");
 return;
-
 }
 
 const dados = await resposta.json();
-
 document.getElementById("produto").value = dados.descricao;
 
 }catch(erro){
-
 console.error(erro);
-
 }
 
 }
@@ -49,7 +39,6 @@ console.error(erro);
 async function buscarOrigem(){
 
 const id = document.getElementById("origem_id").value;
-
 if(!id) return;
 
 try{
@@ -57,21 +46,16 @@ try{
 const resposta = await fetch(`/almoxarifado/${id}`);
 
 if(!resposta.ok){
-
 document.getElementById("origem").value="";
 alert("Origem não encontrada");
 return;
-
 }
 
 const dados = await resposta.json();
-
 document.getElementById("origem").value = dados.nome;
 
 }catch(erro){
-
 console.error(erro);
-
 }
 
 }
@@ -79,7 +63,6 @@ console.error(erro);
 async function buscarDestino(){
 
 const id = document.getElementById("destino_id").value;
-
 if(!id) return;
 
 try{
@@ -87,21 +70,16 @@ try{
 const resposta = await fetch(`/almoxarifado/${id}`);
 
 if(!resposta.ok){
-
 document.getElementById("destino").value="";
 alert("Destino não encontrado");
 return;
-
 }
 
 const dados = await resposta.json();
-
 document.getElementById("destino").value = dados.nome;
 
 }catch(erro){
-
 console.error(erro);
-
 }
 
 }
@@ -111,19 +89,12 @@ function salvarMovimentacao(){
 const dados = {
 
 produto_id: document.getElementById("produto_id").value,
-
 produto: document.getElementById("produto").value,
-
 quantidade: Number(document.getElementById("quantidade").value),
-
 movimentacao: document.getElementById("movimentacao").value,
-
 origem: document.getElementById("origem").value,
-
 destino: document.getElementById("destino").value,
-
 observacoes: document.getElementById("observacoes").value,
-
 data: new Date().toLocaleDateString("pt-BR")
 
 };
@@ -138,33 +109,13 @@ render();
 
 }
 
-document.addEventListener("keydown", function(e){
+function apagarMovimentacao(index){
 
-if(e.key === "Enter"){
+movimentacoes.splice(index,1);
 
-const campos = Array.from(document.querySelectorAll("input, select, textarea"));
+localStorage.setItem("movimentacoes", JSON.stringify(movimentacoes));
 
-const index = campos.indexOf(document.activeElement);
-
-if(index > -1 && index < campos.length - 1){
-
-e.preventDefault();
-
-campos[index + 1].focus();
-
-}
-
-}
-
-});
-
-function marcarAtivo(elemento){
-
-const itens = document.querySelectorAll(".sidebar li");
-
-itens.forEach(item => item.classList.remove("active"));
-
-elemento.classList.add("active");
+render();
 
 }
 
@@ -177,8 +128,6 @@ document.getElementById("tituloPagina").innerText = "Movimentações";
 document.getElementById("btnPDF").style.display = "none";
 
 document.getElementById("btnEnviar").style.display = "inline-block";
-
-marcarAtivo(document.querySelector(".sidebar li:nth-child(1)"));
 
 render();
 
@@ -193,8 +142,6 @@ document.getElementById("tituloPagina").innerText = "Histórico";
 document.getElementById("btnPDF").style.display = "inline-block";
 
 document.getElementById("btnEnviar").style.display = "none";
-
-marcarAtivo(document.querySelector(".sidebar li:nth-child(2)"));
 
 try{
 
@@ -218,16 +165,6 @@ render();
 
 }
 
-function apagarMovimentacao(index){
-
-movimentacoes.splice(index,1);
-
-localStorage.setItem("movimentacoes", JSON.stringify(movimentacoes));
-
-render();
-
-}
-
 function render(){
 
 const tabela = document.getElementById("tabela");
@@ -240,20 +177,14 @@ thead.innerHTML = `
 
 <tr>
 
+<th>ID</th>
 <th>Produto</th>
-
 <th>Quantidade</th>
-
 <th>Movimentação</th>
-
 <th>Origem</th>
-
 <th>Destino</th>
-
 <th>Observações</th>
-
 <th>Data</th>
-
 ${pagina === "movimentacoes" ? "<th>Ações</th>" : ""}
 
 </tr>
@@ -268,18 +199,13 @@ tabela.innerHTML += `
 
 <tr>
 
+<td>${item.produto_id}</td>
 <td>${item.produto}</td>
-
 <td>${item.quantidade}</td>
-
 <td>${item.movimentacao}</td>
-
 <td>${item.origem}</td>
-
 <td>${item.destino}</td>
-
 <td>${item.observacoes}</td>
-
 <td>${item.data || ""}</td>
 
 ${pagina === "movimentacoes" ? `<td><button onclick="apagarMovimentacao(${index})">Apagar</button></td>` : ""}
@@ -295,11 +221,8 @@ ${pagina === "movimentacoes" ? `<td><button onclick="apagarMovimentacao(${index}
 async function enviarParaAPI(){
 
 if(movimentacoes.length === 0){
-
 alert("Nenhuma movimentação para enviar");
-
 return;
-
 }
 
 try{
@@ -309,9 +232,7 @@ for(let mov of movimentacoes){
 await fetch("/movimentacao",{
 
 method:"POST",
-
 headers:{ "Content-Type":"application/json" },
-
 body: JSON.stringify(mov)
 
 });
@@ -333,48 +254,6 @@ console.error(erro);
 alert("Erro ao enviar movimentações");
 
 }
-
-}
-
-function baixarPDF(){
-
-const { jsPDF } = window.jspdf;
-
-const doc = new jsPDF();
-
-doc.setFontSize(16);
-
-doc.text("Histórico Almoxarifado",20,20);
-
-let y = 30;
-
-if(!historico || historico.length === 0){
-
-doc.text("Nenhum dado disponível",20,y);
-
-}else{
-
-historico.forEach((item,index)=>{
-
-const linha = `${index+1}. ${item.produto} | ${item.quantidade} | ${item.movimentacao} | ${item.origem} | ${item.destino} | ${item.observacoes}`;
-
-doc.text(linha,20,y);
-
-y+=10;
-
-if(y>280){
-
-doc.addPage();
-
-y=20;
-
-}
-
-});
-
-}
-
-doc.save("historico.pdf");
 
 }
 
