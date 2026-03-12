@@ -194,7 +194,7 @@ try{
 
 for(let mov of movimentacoes){
 
-await fetch("/movimentacoes",{
+await fetch("/movimentacao",{
 
 method:"POST",
 

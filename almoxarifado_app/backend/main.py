@@ -1,15 +1,13 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-import sqlite3
+import mysql.connector
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 
-# =========================
-# Configuração FastAPI
-# =========================
 app = FastAPI()
 
+# CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -18,15 +16,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# =========================
-# Caminho do frontend
-# =========================
+# caminho frontend
 BASE_DIR = Path(__file__).resolve().parent
 FRONTEND_DIR = BASE_DIR.parent / "frontend"
 
-# =========================
-# Modelo de Movimentação
-# =========================
+# modelo
 class Movimentacao(BaseModel):
     produto: str
     quantidade: int
@@ -37,59 +31,72 @@ class Movimentacao(BaseModel):
     data: str
 
 
-# =========================
-# Criar banco de dados
-# =========================
-def criar_banco():
-    conn = sqlite3.connect("almoxarifado.db")
+# conexão com mysql
+def conectar():
+    return mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="Deltafrio@2026",
+        database="almoxarifado"
+    )
+
+
+# criar tabelas automaticamente
+def criar_tabelas():
+
+    conn = conectar()
     cursor = conn.cursor()
 
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS movimentacoes (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            produto TEXT,
-            quantidade INTEGER,
-            movimentacao TEXT,
-            origem TEXT,
-            destino TEXT,
-            observacoes TEXT,
-            data TEXT
-        )
-    ''')
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS movimentacoes (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        produto VARCHAR(255),
+        quantidade INT,
+        movimentacao VARCHAR(50),
+        origem VARCHAR(255),
+        destino VARCHAR(255),
+        observacoes TEXT,
+        data VARCHAR(50)
+    )
+    """)
 
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS historico (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            produto TEXT,
-            quantidade INTEGER,
-            movimentacao TEXT,
-            origem TEXT,
-            destino TEXT,
-            observacoes TEXT,
-            data TEXT
-        )
-    ''')
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS historico (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        produto VARCHAR(255),
+        quantidade INT,
+        movimentacao VARCHAR(50),
+        origem VARCHAR(255),
+        destino VARCHAR(255),
+        observacoes TEXT,
+        data VARCHAR(50)
+    )
+    """)
 
     conn.commit()
+    cursor.close()
     conn.close()
 
-criar_banco()
 
-# =========================
-# POST /movimentacao
-# =========================
-@app.post("/movimentacoes")
+criar_tabelas()
+
+
+# salvar movimentação
+@app.post("/movimentacao")
 def adicionar_movimentacao(mov: Movimentacao):
 
     try:
-        conn = sqlite3.connect("almoxarifado.db")
+
+        conn = conectar()
         cursor = conn.cursor()
 
-        cursor.execute('''
-            INSERT INTO movimentacoes
-            (produto, quantidade, movimentacao, origem, destino, observacoes, data)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        ''', (
+        sql = """
+        INSERT INTO movimentacoes
+        (produto, quantidade, movimentacao, origem, destino, observacoes, data)
+        VALUES (%s,%s,%s,%s,%s,%s,%s)
+        """
+
+        valores = (
             mov.produto,
             mov.quantidade,
             mov.movimentacao,
@@ -97,96 +104,103 @@ def adicionar_movimentacao(mov: Movimentacao):
             mov.destino,
             mov.observacoes,
             mov.data
-        ))
+        )
+
+        cursor.execute(sql, valores)
 
         conn.commit()
+
+        cursor.close()
         conn.close()
 
-        return {"mensagem": "Movimentação salva com sucesso"}
+        return {"mensagem": "Movimentação salva"}
 
     except Exception as e:
+        print("ERRO MYSQL:", e)
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# =========================
-# GET /movimentacoes
-# =========================
+# listar movimentacoes
 @app.get("/movimentacoes")
-def obter_movimentacoes():
+def listar_movimentacoes():
 
     try:
-        conn = sqlite3.connect("almoxarifado.db")
+
+        conn = conectar()
         cursor = conn.cursor()
 
-        cursor.execute('''
-            SELECT produto, quantidade, movimentacao, origem, destino, observacoes, data
-            FROM movimentacoes
-            ORDER BY id DESC
-            LIMIT 50
-        ''')
+        cursor.execute("""
+        SELECT produto, quantidade, movimentacao, origem, destino, observacoes, data
+        FROM movimentacoes
+        ORDER BY id DESC
+        """)
 
         resultado = cursor.fetchall()
+
+        cursor.close()
         conn.close()
 
-        movimentacoes = []
+        dados = []
 
-        for row in resultado:
-            movimentacoes.append({
-                "produto": row[0],
-                "quantidade": row[1],
-                "movimentacao": row[2],
-                "origem": row[3],
-                "destino": row[4],
-                "observacoes": row[5],
-                "data": row[6]
+        for r in resultado:
+
+            dados.append({
+                "produto": r[0],
+                "quantidade": r[1],
+                "movimentacao": r[2],
+                "origem": r[3],
+                "destino": r[4],
+                "observacoes": r[5],
+                "data": r[6]
             })
 
-        return movimentacoes
+        return dados
 
     except Exception as e:
+        print("ERRO MYSQL:", e)
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# =========================
-# GET /historico
-# =========================
+# historico
 @app.get("/historico")
-def obter_historico():
+def listar_historico():
 
     try:
-        conn = sqlite3.connect("almoxarifado.db")
+
+        conn = conectar()
         cursor = conn.cursor()
 
-        cursor.execute('''
-            SELECT produto, quantidade, movimentacao, origem, destino, observacoes, data
-            FROM historico
-            ORDER BY id DESC
-            LIMIT 500
-        ''')
+        cursor.execute("""
+        SELECT produto, quantidade, movimentacao, origem, destino, observacoes, data
+        FROM historico
+        ORDER BY id DESC
+        """)
 
         resultado = cursor.fetchall()
+
+        cursor.close()
         conn.close()
 
-        historico = []
+        dados = []
 
-        for row in resultado:
-            historico.append({
-                "produto": row[0],
-                "quantidade": row[1],
-                "movimentacao": row[2],
-                "origem": row[3],
-                "destino": row[4],
-                "observacoes": row[5],
-                "data": row[6]
+        for r in resultado:
+
+            dados.append({
+                "produto": r[0],
+                "quantidade": r[1],
+                "movimentacao": r[2],
+                "origem": r[3],
+                "destino": r[4],
+                "observacoes": r[5],
+                "data": r[6]
             })
 
-        return historico
+        return dados
 
     except Exception as e:
+        print("ERRO MYSQL:", e)
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# =========================
-# SERVIR FRONTEND
-# =========================
+# servir frontend
 app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")
