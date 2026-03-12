@@ -17,6 +17,7 @@ document.getElementById("destino").value = "";
 document.getElementById("observacoes").value = "";
 
 document.getElementById("modal").style.display = "flex";
+
 }
 
 function fecharModal(){
@@ -134,6 +135,9 @@ function mostrarMovimentacoes(){
 
 pagina = "movimentacoes";
 
+document.getElementById("btnMov").classList.add("active");
+document.getElementById("btnHist").classList.remove("active");
+
 document.getElementById("tituloPagina").innerText = "Movimentações";
 
 document.getElementById("btnPDF").style.display = "none";
@@ -147,6 +151,9 @@ render();
 async function mostrarHistorico(){
 
 pagina = "historico";
+
+document.getElementById("btnHist").classList.add("active");
+document.getElementById("btnMov").classList.remove("active");
 
 document.getElementById("tituloPagina").innerText = "Histórico";
 

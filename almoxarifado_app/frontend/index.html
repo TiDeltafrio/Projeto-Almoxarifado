@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="style.css">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link rel="shortcut icon" href="/almoxarifado_app/frontend/logodeltaofc.png">
 
 </head>
 
@@ -22,11 +23,11 @@
 
 <ul>
 
-<li onclick="mostrarMovimentacoes()" class="active">
+<li id="btnMov" onclick="mostrarMovimentacoes()" class="active">
 Movimentações
 </li>
 
-<li onclick="mostrarHistorico()">
+<li id="btnHist" onclick="mostrarHistorico()">
 Histórico
 </li>
 
@@ -89,12 +90,11 @@ Enviar
 
 <input id="quantidade" type="number" placeholder="Quantidade">
 
-<select id="movimentacao">
-
-<option>Transferencia</option>
+<select id="movimentacao" required>
+<option value="" disabled selected>Movimentação</option>
+<option>Transferência</option>
 <option>Devolução</option>
 <option>Requisição</option>
-
 </select>
 
 <input id="origem_id" placeholder="Almox Origem" onblur="buscarOrigem()">

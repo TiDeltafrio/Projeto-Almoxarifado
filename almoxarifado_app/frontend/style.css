@@ -92,27 +92,6 @@ tbody tr{
 border-bottom:1px solid #eee;
 }
 
-.status{
-padding:5px 10px;
-border-radius:20px;
-font-size:12px;
-}
-
-.sucesso{
-background:#d4efdf;
-color:#27ae60;
-}
-
-.erro{
-background:#fadbd8;
-color:#c0392b;
-}
-
-.pendente{
-background:#fcf3cf;
-color:#f39c12;
-}
-
 .modal{
 display:none;
 position:fixed;
@@ -144,4 +123,8 @@ border-radius:5px;
 .modal-buttons{
 display:flex;
 gap:10px;
+}
+
+#movimentacao{
+color:#888;
 }
