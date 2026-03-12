@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+<title>Sistema Almoxarifado</title>
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+</head>
+
+<body>
+
+<div class="layout">
+
+<aside class="sidebar">
+
+<h2>📦 Almoxarifado</h2>
+
+<ul>
+
+<li onclick="mostrarMovimentacoes()" class="active">
+Movimentações
+</li>
+
+<li onclick="mostrarHistorico()">
+Histórico
+</li>
+0
+</ul>
+
+</aside>
+
+<main class="content">
+
+<header>
+
+<h1 id="tituloPagina">
+Movimentações
+</h1>
+
+<div>
+
+<button id="btnPDF" class="btn-gray" onclick="baixarPDF()" style="display:none">
+Baixar PDF
+</button>
+
+<button id="btnEnviar" class="btn-gray" onclick="enviarParaAPI()">
+Enviar
+</button>
+
+<button class="btn" onclick="abrirModal()">
++ Nova Movimentação
+</button>
+
+</div>
+
+</header>
+
+<div class="table-box">
+
+<table>
+
+<thead id="thead"></thead>
+
+<tbody id="tabela"></tbody>
+
+</table>
+
+</div>
+
+</main>
+
+</div>
+
+
+<div id="modal" class="modal">
+
+<div class="modal-content">
+
+<h2>Nova Movimentação</h2>
+
+<input id="produto" placeholder="Código do Produto">
+
+<input id="quantidade" type="number" placeholder="Quantidade">
+
+<select id="movimentacao">
+
+<option>Transferencia</option>
+<option>Devolução</option>
+<option>Requisição</option>
+
+</select>
+
+<input id="origem" placeholder="Origem">
+
+<input id="destino" placeholder="Destino">
+
+<textarea id="observacoes" placeholder="Observações"></textarea>
+
+<div class="modal-buttons">
+
+<button class="btn" onclick="salvarMovimentacao()">
+Salvar
+</button>
+
+<button class="btn-gray" onclick="fecharModal()">
+Cancelar
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html> 
