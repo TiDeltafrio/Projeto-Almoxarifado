@@ -29,7 +29,7 @@ Movimentações
 <li onclick="mostrarHistorico()">
 Histórico
 </li>
-0
+
 </ul>
 
 </aside>
@@ -83,7 +83,9 @@ Enviar
 
 <h2>Nova Movimentação</h2>
 
-<input id="produto" placeholder="Código do Produto">
+<input id="produto_id" placeholder="Código do Produto" onblur="buscarProduto()">
+
+<input id="produto" placeholder="Descrição do Produto" readonly>
 
 <input id="quantidade" type="number" placeholder="Quantidade">
 
@@ -95,9 +97,13 @@ Enviar
 
 </select>
 
-<input id="origem" placeholder="Origem">
+<input id="origem_id" placeholder="Almox Origem" onblur="buscarOrigem()">
 
-<input id="destino" placeholder="Destino">
+<input id="origem" placeholder="Descrição Origem" readonly>
+
+<input id="destino_id" placeholder="Almox Destino" onblur="buscarDestino()">
+
+<input id="destino" placeholder="Descrição Destino" readonly>
 
 <textarea id="observacoes" placeholder="Observações"></textarea>
 
@@ -120,4 +126,4 @@ Cancelar
 <script src="script.js"></script>
 
 </body>
-</html> 
+</html>
