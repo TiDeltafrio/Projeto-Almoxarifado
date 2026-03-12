@@ -5,6 +5,17 @@ let historico = [];
 let pagina = "movimentacoes";
 
 function abrirModal(){
+
+document.getElementById("produto_id").value = "";
+document.getElementById("produto").value = "";
+document.getElementById("quantidade").value = "";
+document.getElementById("movimentacao").value = "";
+document.getElementById("origem_id").value = "";
+document.getElementById("origem").value = "";
+document.getElementById("destino_id").value = "";
+document.getElementById("destino").value = "";
+document.getElementById("observacoes").value = "";
+
 document.getElementById("modal").style.display = "flex";
 }
 
