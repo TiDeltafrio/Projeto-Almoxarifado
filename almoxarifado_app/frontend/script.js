@@ -17,92 +17,31 @@ document.getElementById("destino").value = "";
 document.getElementById("observacoes").value = "";
 
 document.getElementById("modal").style.display = "flex";
+
 }
 
 function fecharModal(){
 document.getElementById("modal").style.display = "none";
 }
 
-async function buscarProduto(){
-
-const id = document.getElementById("produto_id").value;
-if(!id) return;
-
-try{
-
-const resposta = await fetch(`/produto/${id}`);
-
-if(!resposta.ok){
-document.getElementById("produto").value="";
-alert("Produto não encontrado");
-return;
-}
-
-const dados = await resposta.json();
-document.getElementById("produto").value = dados.descricao;
-
-}catch(erro){
-console.error(erro);
-}
-
-}
-
-async function buscarOrigem(){
-
-const id = document.getElementById("origem_id").value;
-if(!id) return;
-
-try{
-
-const resposta = await fetch(`/almoxarifado/${id}`);
-
-if(!resposta.ok){
-document.getElementById("origem").value="";
-alert("Origem não encontrada");
-return;
-}
-
-const dados = await resposta.json();
-document.getElementById("origem").value = dados.nome;
-
-}catch(erro){
-console.error(erro);
-}
-
-}
-
-async function buscarDestino(){
-
-const id = document.getElementById("destino_id").value;
-if(!id) return;
-
-try{
-
-const resposta = await fetch(`/almoxarifado/${id}`);
-
-if(!resposta.ok){
-document.getElementById("destino").value="";
-alert("Destino não encontrado");
-return;
-}
-
-const dados = await resposta.json();
-document.getElementById("destino").value = dados.nome;
-
-}catch(erro){
-console.error(erro);
-}
-
-}
-
 function salvarMovimentacao(){
+
+const produto_id = document.getElementById("produto_id").value;
+const produto = document.getElementById("produto").value;
+const quantidade = document.getElementById("quantidade").value;
+const movimentacao = document.getElementById("movimentacao").value;
+
+if(!produto_id || !produto || !quantidade || !movimentacao){
+alert("Preencha todos os campos obrigatórios");
+return;
+}
 
 const dados = {
 
-produto_id: document.getElementById("produto_id").value,
-produto: document.getElementById("produto").value,
-quantidade: Number(document.getElementById("quantidade").value),
-movimentacao: document.getElementById("movimentacao").value,
+produto_id: produto_id,
+produto: produto,
+quantidade: Number(quantidade),
+movimentacao: movimentacao,
 origem: document.getElementById("origem").value,
 destino: document.getElementById("destino").value,
 observacoes: document.getElementById("observacoes").value,
@@ -134,10 +73,12 @@ function mostrarMovimentacoes(){
 
 pagina = "movimentacoes";
 
+document.getElementById("btnMov").classList.add("active");
+document.getElementById("btnHist").classList.remove("active");
+
 document.getElementById("tituloPagina").innerText = "Movimentações";
 
 document.getElementById("btnPDF").style.display = "none";
-
 document.getElementById("btnEnviar").style.display = "inline-block";
 
 render();
@@ -148,16 +89,17 @@ async function mostrarHistorico(){
 
 pagina = "historico";
 
+document.getElementById("btnHist").classList.add("active");
+document.getElementById("btnMov").classList.remove("active");
+
 document.getElementById("tituloPagina").innerText = "Histórico";
 
 document.getElementById("btnPDF").style.display = "inline-block";
-
 document.getElementById("btnEnviar").style.display = "none";
 
 try{
 
 const resposta = await fetch("/historico");
-
 const dados = await resposta.json();
 
 historico = dados;
@@ -179,7 +121,6 @@ render();
 function render(){
 
 const tabela = document.getElementById("tabela");
-
 const thead = document.getElementById("thead");
 
 tabela.innerHTML = "";
