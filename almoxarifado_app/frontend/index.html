@@ -52,6 +52,8 @@ Movimentações
 Baixar PDF
 </button>
 
+
+
 <button id="btnEnviar" class="btn-gray" onclick="enviarParaAPI()">
 Enviar
 </button>
@@ -63,6 +65,36 @@ Enviar
 </div>
 
 </header>
+
+<div id="filtroDatas" style="display:none;">
+
+<div class="filtro-grupo">
+
+<div class="filtro-campo">
+<label>Data inicial</label>
+<input type="date" id="dataInicio">
+</div>
+
+<div class="filtro-campo">
+<label>Data final</label>
+<input type="date" id="dataFim">
+</div>
+
+</div>
+
+<div class="filtro-botoes">
+
+<button class="btn-filtrar" onclick="filtrarHistorico()">
+Filtrar
+</button>
+
+<button class="btn-limpar" onclick="limparFiltro()">
+Limpar
+</button>
+
+</div>
+
+</div>
 
 <div class="table-box">
 

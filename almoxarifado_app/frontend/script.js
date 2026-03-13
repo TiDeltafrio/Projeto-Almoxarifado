@@ -111,9 +111,10 @@ document.getElementById("tituloPagina").innerText = "Movimentações";
 
 document.getElementById("btnPDF").style.display = "none";
 document.getElementById("btnEnviar").style.display = "inline-block";
-
-/* MOSTRA O BOTÃO */
 document.getElementById("btnNova").style.display = "inline-block";
+
+/* esconder filtro */
+document.getElementById("filtroDatas").style.display = "none";
 
 render();
 
@@ -130,12 +131,10 @@ document.getElementById("tituloPagina").innerText = "Histórico";
 
 document.getElementById("btnPDF").style.display = "inline-block";
 document.getElementById("btnEnviar").style.display = "none";
-
-/* ESCONDE O BOTÃO */
 document.getElementById("btnNova").style.display = "none";
 
-/* não busca API */
-/* mostra apenas retorno do RPA */
+/* mostrar filtro */
+document.getElementById("filtroDatas").style.display = "flex";
 
 render();
 
@@ -427,5 +426,67 @@ headStyles: { fillColor: [44,62,80] }
 /* salva */
 
 doc.save("historico_movimentacoes.pdf");
+}
+
+function filtrarHistorico(){
+
+const inicio = document.getElementById("dataInicio").value;
+const fim = document.getElementById("dataFim").value;
+
+if(!inicio || !fim){
+alert("Selecione as duas datas");
+return;
+}
+
+const inicioDate = new Date(inicio);
+const fimDate = new Date(fim);
+
+const filtrado = historico.filter(item => {
+
+const partes = item.data.split("/");
+const dataItem = new Date(`${partes[2]}-${partes[1]}-${partes[0]}`);
+
+return dataItem >= inicioDate && dataItem <= fimDate;
+
+});
+
+renderTabelaFiltrada(filtrado);
 
 }
+
+function renderTabelaFiltrada(lista){
+
+const tabela = document.getElementById("tabela");
+
+tabela.innerHTML = "";
+
+lista.forEach(item => {
+
+tabela.innerHTML += `
+
+<tr>
+<td>${item.produto_id}</td>
+<td>${item.produto}</td>
+<td>${item.quantidade}</td>
+<td>${item.movimentacao}</td>
+<td>${item.origem}</td>
+<td>${item.destino}</td>
+<td>${item.observacoes}</td>
+<td>${item.data}</td>
+</tr>
+
+`;
+
+});
+
+}
+
+function limparFiltro(){
+
+document.getElementById("dataInicio").value = "";
+document.getElementById("dataFim").value = "";
+
+render();
+
+}
+
