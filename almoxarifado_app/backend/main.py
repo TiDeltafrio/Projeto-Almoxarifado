@@ -39,19 +39,15 @@ def conectar():
     )
 
 
+# ----------------------------
+# BUSCAR PRODUTO
+# ----------------------------
 @app.get("/produto/{produto_id}")
 def buscar_produto(produto_id: int):
-
     conn = conectar()
     cursor = conn.cursor()
-
-    cursor.execute(
-        "SELECT descricao FROM produtos WHERE id = %s",
-        (produto_id,)
-    )
-
+    cursor.execute("SELECT descricao FROM produtos WHERE id = %s", (produto_id,))
     resultado = cursor.fetchone()
-
     cursor.close()
     conn.close()
 
@@ -61,18 +57,36 @@ def buscar_produto(produto_id: int):
     return {"descricao": resultado[0]}
 
 
-@app.post("/movimentacao")
-def adicionar_movimentacao(mov: Movimentacao):
-
+# ----------------------------
+# BUSCAR ALMOXARIFADO
+# ----------------------------
+@app.get("/almoxarifado/{id}")
+def buscar_almoxarifado(id: int):
     conn = conectar()
     cursor = conn.cursor()
+    cursor.execute("SELECT nome FROM almoxarifados WHERE id=%s", (id,))
+    resultado = cursor.fetchone()
+    cursor.close()
+    conn.close()
 
+    if not resultado:
+        raise HTTPException(status_code=404, detail="Almoxarifado não encontrado")
+
+    return {"nome": resultado[0]}
+
+
+# ----------------------------
+# ADICIONAR MOVIMENTAÇÃO
+# ----------------------------
+@app.post("/movimentacao")
+def adicionar_movimentacao(mov: Movimentacao):
+    conn = conectar()
+    cursor = conn.cursor()
     sql = """
     INSERT INTO movimentacoes
     (produto_id, produto, quantidade, movimentacao, origem, destino, observacoes, data)
     VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
     """
-
     valores = (
         mov.produto_id,
         mov.produto,
@@ -83,36 +97,30 @@ def adicionar_movimentacao(mov: Movimentacao):
         mov.observacoes,
         mov.data
     )
-
     cursor.execute(sql, valores)
-
     conn.commit()
-
     cursor.close()
     conn.close()
-
     return {"mensagem": "Movimentação salva"}
 
 
+# ----------------------------
+# LISTAR MOVIMENTAÇÕES
+# ----------------------------
 @app.get("/movimentacoes")
 def listar_movimentacoes():
-
     conn = conectar()
     cursor = conn.cursor()
-
     cursor.execute("""
     SELECT produto, quantidade, movimentacao, origem, destino, observacoes, data
     FROM movimentacoes
     ORDER BY id DESC
     """)
-
     resultado = cursor.fetchall()
-
     cursor.close()
     conn.close()
 
     dados = []
-
     for r in resultado:
         dados.append({
             "produto": r[0],
@@ -126,37 +134,15 @@ def listar_movimentacoes():
 
     return dados
 
-@app.get("/almoxarifado/{id}")
-def buscar_almoxarifado(id:int):
 
-    conn = conectar()
-    cursor = conn.cursor()
-
-    cursor.execute(
-        "SELECT nome FROM almoxarifados WHERE id=%s",
-        (id,)
-    )
-
-    resultado = cursor.fetchone()
-
-    cursor.close()
-    conn.close()
-
-    if not resultado:
-        raise HTTPException(status_code=404, detail="Almoxarifado não encontrado")
-
-    return {"nome": resultado[0]}
-
+# ----------------------------
+# ENVIAR PARA RPA (simulação)
+# ----------------------------
 @app.post("/enviar-movimentacoes")
 def enviar_movimentacoes(movs: list):
-
-    # AQUI você enviará para o RPA
-    # exemplo fictício
-
-    # requests.post("http://ip-do-rpa/api", json=movs)
-
+    # Aqui você enviaria para o RPA
+    # Exemplo fictício
     historico = []
-
     for m in movs:
         historico.append({
             "produto_id": m["produto_id"],
@@ -168,7 +154,10 @@ def enviar_movimentacoes(movs: list):
             "observacoes": m["observacoes"],
             "data": m["data"]
         })
-
     return historico
 
+
+# ----------------------------
+# FRONTEND
+# ----------------------------
 app.mount("/", StaticFiles(directory=FRONTEND_DIR, html=True), name="frontend")

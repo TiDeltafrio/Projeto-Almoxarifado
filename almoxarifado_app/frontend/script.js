@@ -24,39 +24,70 @@ function fecharModal(){
 document.getElementById("modal").style.display = "none";
 }
 
-function salvarMovimentacao(){
+// Validar produto e almoxarifados antes de salvar
+async function validarCampos() {
+  const produtoId = document.getElementById("produto_id").value;
+  const origemId = document.getElementById("origem_id").value;
+  const destinoId = document.getElementById("destino_id").value;
 
-const produto_id = document.getElementById("produto_id").value;
-const produto = document.getElementById("produto").value;
-const quantidade = document.getElementById("quantidade").value;
-const movimentacao = document.getElementById("movimentacao").value;
+  try {
+    // Validar produto
+    if (!produtoId) throw new Error("Produto inválido");
+    let res = await fetch(`/produto/${produtoId}`);
+    if (!res.ok) throw new Error("Produto não encontrado");
+    const produto = await res.json();
+    document.getElementById("produto").value = produto.descricao;
 
-if(!produto_id || !produto || !quantidade || !movimentacao){
-alert("Preencha todos os campos obrigatórios");
-return;
+    // Validar origem
+    if (!origemId) throw new Error("Almoxarifado de origem inválido");
+    res = await fetch(`/almoxarifado/${origemId}`);
+    if (!res.ok) throw new Error("Almoxarifado de origem não encontrado");
+    const origem = await res.json();
+    document.getElementById("origem").value = origem.nome;
+
+    // Validar destino
+    if (!destinoId) throw new Error("Almoxarifado de destino inválido");
+    res = await fetch(`/almoxarifado/${destinoId}`);
+    if (!res.ok) throw new Error("Almoxarifado de destino não encontrado");
+    const destino = await res.json();
+    document.getElementById("destino").value = destino.nome;
+
+    return true; // Todos válidos
+  } catch (erro) {
+    alert(erro.message);
+    return false; // Algum campo inválido
+  }
 }
 
-const dados = {
+// Função de salvar movimentação, agora async
+function salvarMovimentacao() {
+    const produto = document.getElementById("produto").value;
+    const origem = document.getElementById("origem").value;
+    const destino = document.getElementById("destino").value;
+    const quantidade = document.getElementById("quantidade").value;
+    const movimentacao = document.getElementById("movimentacao").value;
 
-produto_id: produto_id,
-produto: produto,
-quantidade: Number(quantidade),
-movimentacao: movimentacao,
-origem: document.getElementById("origem").value,
-destino: document.getElementById("destino").value,
-observacoes: document.getElementById("observacoes").value,
-data: new Date().toLocaleDateString("pt-BR")
+    if (!produto || !origem || !destino || !quantidade || !movimentacao) {
+        alert("Preencha todos os campos obrigatórios corretamente. Verifique Produto, Origem e Destino.");
+        return; // não deixa salvar
+    }
 
-};
+    const dados = {
+        produto_id: Number(document.getElementById("produto_id").value),
+        produto: produto,
+        quantidade: Number(quantidade),
+        movimentacao: movimentacao,
+        origem: origem,
+        destino: destino,
+        observacoes: document.getElementById("observacoes").value,
+        data: new Date().toLocaleDateString("pt-BR")
+    };
 
-movimentacoes.unshift(dados);
+    movimentacoes.unshift(dados);
+    localStorage.setItem("movimentacoes", JSON.stringify(movimentacoes));
 
-localStorage.setItem("movimentacoes", JSON.stringify(movimentacoes));
-
-fecharModal();
-
-render();
-
+    fecharModal();
+    render();
 }
 
 function apagarMovimentacao(index){
@@ -235,58 +266,42 @@ alert("Erro ao buscar produto");
 
 }
 
-async function buscarOrigem(){
+async function buscarOrigem() {
+  const id = document.getElementById("origem_id").value;
+  if (!id) return;
 
-const id = document.getElementById("origem_id").value;
-
-if(!id) return;
-
-try{
-
-const resposta = await fetch(`/almoxarifado/${id}`);
-
-if(!resposta.ok){
-document.getElementById("origem").value = "";
-return;
+  try {
+    const resposta = await fetch(`/almoxarifado/${id}`);
+    if (!resposta.ok) {
+      document.getElementById("origem").value = "";
+      alert("Almoxarifado de origem não encontrado");
+      return;
+    }
+    const dados = await resposta.json();
+    document.getElementById("origem").value = dados.nome;
+  } catch (erro) {
+    document.getElementById("origem").value = "";
+    alert("Erro ao buscar almoxarifado de origem");
+  }
 }
 
-const dados = await resposta.json();
+async function buscarDestino() {
+  const id = document.getElementById("destino_id").value;
+  if (!id) return;
 
-document.getElementById("origem").value = dados.nome;
-
-}catch(erro){
-
-console.error(erro);
-
-}
-
-}
-
-async function buscarDestino(){
-
-const id = document.getElementById("destino_id").value;
-
-if(!id) return;
-
-try{
-
-const resposta = await fetch(`/almoxarifado/${id}`);
-
-if(!resposta.ok){
-document.getElementById("destino").value = "";
-return;
-}
-
-const dados = await resposta.json();
-
-document.getElementById("destino").value = dados.nome;
-
-}catch(erro){
-
-console.error(erro);
-
-}
-
+  try {
+    const resposta = await fetch(`/almoxarifado/${id}`);
+    if (!resposta.ok) {
+      document.getElementById("destino").value = "";
+      alert("Almoxarifado de destino não encontrado");
+      return;
+    }
+    const dados = await resposta.json();
+    document.getElementById("destino").value = dados.nome;
+  } catch (erro) {
+    document.getElementById("destino").value = "";
+    alert("Erro ao buscar almoxarifado de destino");
+  }
 }
 
 async function buscarProduto(){
@@ -317,58 +332,42 @@ console.error("Erro ao buscar produto:", erro);
 
 }
 
-async function buscarOrigem(){
+async function buscarOrigem() {
+  const id = document.getElementById("origem_id").value;
+  if (!id) return;
 
-const id = document.getElementById("origem_id").value;
-
-if(!id) return;
-
-try{
-
-const resposta = await fetch(`/almoxarifado/${id}`);
-
-if(!resposta.ok){
-document.getElementById("origem").value = "";
-return;
+  try {
+    const resposta = await fetch(`/almoxarifado/${id}`);
+    if (!resposta.ok) {
+      document.getElementById("origem").value = "";
+      alert("Almoxarifado de origem não encontrado");
+      return;
+    }
+    const dados = await resposta.json();
+    document.getElementById("origem").value = dados.nome;
+  } catch (erro) {
+    document.getElementById("origem").value = "";
+    alert("Erro ao buscar almoxarifado de origem");
+  }
 }
 
-const dados = await resposta.json();
+async function buscarDestino() {
+  const id = document.getElementById("destino_id").value;
+  if (!id) return;
 
-document.getElementById("origem").value = dados.nome;
-
-}catch(erro){
-
-console.error("Erro origem:", erro);
-
-}
-
-}
-
-async function buscarDestino(){
-
-const id = document.getElementById("destino_id").value;
-
-if(!id) return;
-
-try{
-
-const resposta = await fetch(`/almoxarifado/${id}`);
-
-if(!resposta.ok){
-document.getElementById("destino").value = "";
-return;
-}
-
-const dados = await resposta.json();
-
-document.getElementById("destino").value = dados.nome;
-
-}catch(erro){
-
-console.error("Erro destino:", erro);
-
-}
-
+  try {
+    const resposta = await fetch(`/almoxarifado/${id}`);
+    if (!resposta.ok) {
+      document.getElementById("destino").value = "";
+      alert("Almoxarifado de destino não encontrado");
+      return;
+    }
+    const dados = await resposta.json();
+    document.getElementById("destino").value = dados.nome;
+  } catch (erro) {
+    document.getElementById("destino").value = "";
+    alert("Erro ao buscar almoxarifado de destino");
+  }
 }
 
 function baixarPDF(){
