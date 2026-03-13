@@ -1,10 +1,13 @@
+/* RESET */
+
 body{
 margin:0;
-font-family:Arial, Helvetica, sans-serif;
+font-family:Segoe UI, Arial, sans-serif;
 background:#f4f6f9;
+color:#333;
 }
 
-/* LAYOUT PRINCIPAL */
+/* LAYOUT */
 
 .layout{
 display:flex;
@@ -15,51 +18,38 @@ min-height:100vh;
 
 .sidebar{
 width:220px;
-background:#2c3e50;
+background:linear-gradient(180deg,#2c3e50,#1b2735);
 color:white;
 padding:20px;
-position:relative;
+display:flex;
+flex-direction:column;
 }
 
 .sidebar h2{
 margin-top:0;
+margin-bottom:20px;
+font-weight:600;
 }
 
 .sidebar ul{
 list-style:none;
 padding:0;
-margin-top:20px;
 }
 
 .sidebar li{
-padding:12px;
-cursor:pointer;
+padding:12px 14px;
 border-radius:6px;
+cursor:pointer;
 margin-bottom:6px;
 transition:0.2s;
 }
 
 .sidebar li:hover{
-background:#34495e;
+background:rgba(255,255,255,0.1);
 }
 
 .sidebar li.active{
-background:#1abc9c;
-}
-
-/* LOGO EMPRESA */
-
-.logo-empresa{
-position:absolute;
-bottom:20px;
-left:0;
-width:100%;
-text-align:center;
-}
-
-.logo-empresa img{
-width:120px;
-opacity:0.9;
+background:#3b6ea5;
 }
 
 /* CONTEÚDO */
@@ -75,49 +65,62 @@ header{
 display:flex;
 justify-content:space-between;
 align-items:center;
-flex-wrap:wrap;
-gap:10px;
 margin-bottom:20px;
+}
+
+header h1{
+margin:0;
+font-weight:600;
 }
 
 /* BOTÕES */
 
 .btn{
-background:#27ae60;
-color:white;
+background:#2ecc71;
 border:none;
-padding:10px 16px;
+color:white;
+padding:9px 16px;
 border-radius:6px;
 cursor:pointer;
+font-size:14px;
 transition:0.2s;
 }
 
 .btn:hover{
-opacity:0.9;
+background:#27ae60;
 }
 
 .btn-gray{
-background:#bdc3c7;
+background:#979797;
 border:none;
-padding:10px 16px;
+color:white;
+padding:9px 16px;
 border-radius:6px;
 cursor:pointer;
+font-size:14px;
+transition:0.2s;
 }
 
-/* TABELA */
+.btn-gray:hover{
+background:#7f8c8d;
+}
+
+/* CARD DA TABELA */
 
 .table-box{
 background:white;
 border-radius:10px;
 padding:15px;
-box-shadow:0 3px 10px rgba(0,0,0,0.08);
+box-shadow:0 3px 12px rgba(0,0,0,0.12);
 overflow-x:auto;
 }
 
+/* TABELA */
+
 table{
 width:100%;
-border-collapse:collapse;
-min-width:700px;
+border-collapse:separate;
+border-spacing:0;
 }
 
 thead{
@@ -125,14 +128,19 @@ background:#2c3e50;
 color:white;
 }
 
-th,td{
+th{
 padding:12px;
+font-weight:500;
 text-align:left;
-vertical-align:middle;
 }
 
-tbody tr{
+td{
+padding:10px;
 border-bottom:1px solid #eee;
+}
+
+tbody tr:hover{
+background:#f5f7fa;
 }
 
 /* MODAL */
@@ -147,45 +155,35 @@ height:100%;
 background:rgba(0,0,0,0.4);
 justify-content:center;
 align-items:center;
-z-index:1000;
 }
 
 .modal-content{
 background:white;
 padding:25px;
 border-radius:10px;
-width:90%;
-max-width:400px;
+width:360px;
 display:flex;
 flex-direction:column;
 gap:10px;
+box-shadow:0 4px 15px rgba(0,0,0,0.2);
 }
 
-input,select,textarea{
+.modal-content input,
+.modal-content select,
+.modal-content textarea{
 padding:8px;
 border:1px solid #ccc;
-border-radius:5px;
-width:100%;
-box-sizing:border-box;
+border-radius:6px;
+font-size:14px;
 }
 
 .modal-buttons{
 display:flex;
 gap:10px;
-flex-wrap:wrap;
+margin-top:10px;
 }
 
-/* TEXTO MOVIMENTAÇÃO */
-
-#movimentacao{
-color:#888;
-}
-
-/* FILTRO HISTÓRICO */
-
-/* BARRA DE FILTRO HISTÓRICO */
-
-/* BARRA DE FILTRO MODERNA */
+/* FILTRO MODERNO */
 
 #filtroDatas{
 display:flex;
@@ -201,8 +199,6 @@ color:white;
 flex-wrap:wrap;
 }
 
-/* grupo de campos */
-
 .filtro-grupo{
 display:flex;
 gap:15px;
@@ -215,8 +211,6 @@ flex-direction:column;
 font-size:13px;
 }
 
-/* inputs */
-
 .filtro-campo input{
 padding:7px 10px;
 border:none;
@@ -224,8 +218,6 @@ border-radius:6px;
 font-size:13px;
 margin-top:3px;
 }
-
-/* botões */
 
 .filtro-botoes{
 display:flex;
@@ -240,7 +232,6 @@ padding:8px 16px;
 border-radius:6px;
 font-size:13px;
 cursor:pointer;
-transition:0.2s;
 }
 
 .btn-filtrar:hover{
@@ -255,16 +246,21 @@ padding:8px 16px;
 border-radius:6px;
 font-size:13px;
 cursor:pointer;
-transition:0.2s;
 }
 
 .btn-limpar:hover{
 background:#c0392b;
 }
 
+thead th:first-child{
+border-top-left-radius:10px;
+}
 
+thead th:last-child{
+border-top-right-radius:10px;
+}
 
-/* RESPONSIVIDADE */
+/* RESPONSIVO */
 
 @media (max-width:900px){
 
@@ -274,53 +270,14 @@ flex-direction:column;
 
 .sidebar{
 width:100%;
-display:flex;
-flex-direction:column;
+flex-direction:row;
 align-items:center;
-text-align:center;
+gap:20px;
 }
 
 .sidebar ul{
 display:flex;
-flex-wrap:wrap;
-justify-content:center;
 gap:10px;
 }
 
-.sidebar li{
-margin:0;
 }
-
-.logo-empresa{
-position:relative;
-margin-top:20px;
-}
-
-.content{
-padding:20px;
-}
-
-header{
-flex-direction:column;
-align-items:flex-start;
-}
-
-}
-
-@media (max-width:600px){
-
-th,td{
-font-size:14px;
-padding:8px;
-}
-
-.btn{
-width:100%;
-}
-
-.modal-buttons{
-flex-direction:column;
-}
-
-}
-
