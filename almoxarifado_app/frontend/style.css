@@ -1,20 +1,28 @@
 body{
 margin:0;
-font-family:Arial;
+font-family:Arial, Helvetica, sans-serif;
 background:#f4f6f9;
 }
 
+/* LAYOUT PRINCIPAL */
+
 .layout{
 display:flex;
-height:100vh;
+min-height:100vh;
 }
 
+/* SIDEBAR */
+
 .sidebar{
-width:200px;
+width:220px;
 background:#2c3e50;
 color:white;
 padding:20px;
 position:relative;
+}
+
+.sidebar h2{
+margin-top:0;
 }
 
 .sidebar ul{
@@ -39,16 +47,40 @@ background:#34495e;
 background:#1abc9c;
 }
 
+/* LOGO EMPRESA */
+
+.logo-empresa{
+position:absolute;
+bottom:20px;
+left:0;
+width:100%;
+text-align:center;
+}
+
+.logo-empresa img{
+width:120px;
+opacity:0.9;
+}
+
+/* CONTEÚDO */
+
 .content{
 flex:1;
 padding:30px;
 }
 
+/* HEADER */
+
 header{
 display:flex;
 justify-content:space-between;
+align-items:center;
+flex-wrap:wrap;
+gap:10px;
 margin-bottom:20px;
 }
+
+/* BOTÕES */
 
 .btn{
 background:#27ae60;
@@ -57,6 +89,11 @@ border:none;
 padding:10px 16px;
 border-radius:6px;
 cursor:pointer;
+transition:0.2s;
+}
+
+.btn:hover{
+opacity:0.9;
 }
 
 .btn-gray{
@@ -67,17 +104,20 @@ border-radius:6px;
 cursor:pointer;
 }
 
+/* TABELA */
+
 .table-box{
 background:white;
 border-radius:10px;
 padding:15px;
 box-shadow:0 3px 10px rgba(0,0,0,0.08);
+overflow-x:auto;
 }
 
 table{
 width:100%;
 border-collapse:collapse;
-table-layout:fixed;
+min-width:700px;
 }
 
 thead{
@@ -95,6 +135,8 @@ tbody tr{
 border-bottom:1px solid #eee;
 }
 
+/* MODAL */
+
 .modal{
 display:none;
 position:fixed;
@@ -105,13 +147,15 @@ height:100%;
 background:rgba(0,0,0,0.4);
 justify-content:center;
 align-items:center;
+z-index:1000;
 }
 
 .modal-content{
 background:white;
 padding:25px;
 border-radius:10px;
-width:350px;
+width:90%;
+max-width:400px;
 display:flex;
 flex-direction:column;
 gap:10px;
@@ -121,34 +165,78 @@ input,select,textarea{
 padding:8px;
 border:1px solid #ccc;
 border-radius:5px;
+width:100%;
+box-sizing:border-box;
 }
 
 .modal-buttons{
 display:flex;
 gap:10px;
+flex-wrap:wrap;
 }
 
-<<<<<<< HEAD
-#movimentacao{
-color:#888;
-=======
-<<<<<<< HEAD
-#movimentacao{
-color:#888;
-=======
-/* LOGO DELTAFRIO */
+/* TEXTO MOVIMENTAÇÃO */
 
-.logo-empresa{
-position:absolute;
-bottom:20px;
-left:0;
+#movimentacao{
+color:#888;
+}
+
+/* RESPONSIVIDADE */
+
+@media (max-width:900px){
+
+.layout{
+flex-direction:column;
+}
+
+.sidebar{
 width:100%;
+display:flex;
+flex-direction:column;
+align-items:center;
 text-align:center;
 }
 
-.logo-empresa img{
-width:120px;
-opacity:0.9;
->>>>>>> 2fc2177fe66bfeeed624757c7f51e86771676a03
->>>>>>> bbae5fb4b06e3cff6896798fe4aa1670468386fb
+.sidebar ul{
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+gap:10px;
+}
+
+.sidebar li{
+margin:0;
+}
+
+.logo-empresa{
+position:relative;
+margin-top:20px;
+}
+
+.content{
+padding:20px;
+}
+
+header{
+flex-direction:column;
+align-items:flex-start;
+}
+
+}
+
+@media (max-width:600px){
+
+th,td{
+font-size:14px;
+padding:8px;
+}
+
+.btn{
+width:100%;
+}
+
+.modal-buttons{
+flex-direction:column;
+}
+
 }
