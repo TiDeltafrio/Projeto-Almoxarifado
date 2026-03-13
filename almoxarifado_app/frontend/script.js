@@ -1,6 +1,7 @@
 let movimentacoes = JSON.parse(localStorage.getItem("movimentacoes")) || [];
 
 let historico = [];
+let historicoFiltrado = [];
 
 let pagina = "movimentacoes";
 
@@ -133,10 +134,30 @@ document.getElementById("btnPDF").style.display = "inline-block";
 document.getElementById("btnEnviar").style.display = "none";
 document.getElementById("btnNova").style.display = "none";
 
-/* mostrar filtro */
 document.getElementById("filtroDatas").style.display = "flex";
 
+try {
+
+const resposta = await fetch("/historico");
+
+if (!resposta.ok) {
+console.warn("Erro ao buscar histórico");
+historico = [];
 render();
+return;
+}
+
+historico = await resposta.json();
+
+render();
+
+} catch (erro) {
+
+console.error("Erro ao carregar histórico:", erro);
+historico = [];
+render();
+
+}
 
 }
 
@@ -373,6 +394,15 @@ function baixarPDF(){
 
 const { jsPDF } = window.jspdf;
 
+const dataInicio = document.getElementById("dataInicio").value;
+const dataFim = document.getElementById("dataFim").value;
+
+/* se não houver filtro ativo, limpa historicoFiltrado */
+
+if(!dataInicio || !dataFim){
+historicoFiltrado = [];
+}
+
 const doc = new jsPDF();
 
 /* título */
@@ -380,10 +410,9 @@ const doc = new jsPDF();
 doc.setFontSize(16);
 doc.text("Histórico de Movimentações", 14, 15);
 
-/* colunas da tabela */
+/* colunas */
 
 const colunas = [
-
 "ID",
 "Produto",
 "Quantidade",
@@ -392,13 +421,13 @@ const colunas = [
 "Destino",
 "Observações",
 "Data"
-
 ];
 
 /* linhas */
 
-const linhas = historico.map(item => [
+const dadosPDF = historicoFiltrado.length > 0 ? historicoFiltrado : historico;
 
+const linhas = dadosPDF.map(item => [
 item.produto_id,
 item.produto,
 item.quantidade,
@@ -407,25 +436,23 @@ item.origem,
 item.destino,
 item.observacoes,
 item.data
-
 ]);
 
-/* gera tabela */
+/* tabela */
 
 doc.autoTable({
-
 head: [colunas],
 body: linhas,
 startY: 25,
 theme: "grid",
 styles: { fontSize: 9 },
 headStyles: { fillColor: [44,62,80] }
-
 });
 
-/* salva */
+/* salvar */
 
 doc.save("historico_movimentacoes.pdf");
+
 }
 
 function filtrarHistorico(){
@@ -441,7 +468,7 @@ return;
 const inicioDate = new Date(inicio);
 const fimDate = new Date(fim);
 
-const filtrado = historico.filter(item => {
+historicoFiltrado = historico.filter(item => {
 
 const partes = item.data.split("/");
 const dataItem = new Date(`${partes[2]}-${partes[1]}-${partes[0]}`);
@@ -450,7 +477,18 @@ return dataItem >= inicioDate && dataItem <= fimDate;
 
 });
 
-renderTabelaFiltrada(filtrado);
+renderTabelaFiltrada(historicoFiltrado);
+
+}
+
+function limparFiltro(){
+
+document.getElementById("dataInicio").value = "";
+document.getElementById("dataFim").value = "";
+
+historicoFiltrado = [];
+
+renderTabela();
 
 }
 

@@ -123,14 +123,15 @@ def listar_movimentacoes():
     dados = []
     for r in resultado:
         dados.append({
-            "produto": r[0],
-            "quantidade": r[1],
-            "movimentacao": r[2],
-            "origem": r[3],
-            "destino": r[4],
-            "observacoes": r[5],
-            "data": r[6]
-        })
+    "produto_id": "",  # vazio porque não existe no banco
+    "produto": r[0],
+    "quantidade": r[1],
+    "movimentacao": r[2],
+    "origem": r[3],
+    "destino": r[4],
+    "observacoes": r[5],
+    "data": r[6]
+})
 
     return dados
 
@@ -140,23 +141,63 @@ def listar_movimentacoes():
 # ----------------------------
 @app.post("/enviar-movimentacoes")
 def enviar_movimentacoes(movs: list):
-    # Aqui você enviaria para o RPA
-    # Exemplo fictício
-    historico = []
-    for m in movs:
-        historico.append({
-            "produto_id": m["produto_id"],
-            "produto": m["produto"],
-            "quantidade": m["quantidade"],
-            "movimentacao": m["movimentacao"],
-            "origem": m["origem"],
-            "destino": m["destino"],
-            "observacoes": m["observacoes"],
-            "data": m["data"]
+
+    webhook_rpa = "http://IP_DO_ROBO/webhook/movimentacoes"
+
+    try:
+
+        resposta = requests.post(
+            webhook_rpa,
+            json=movs,
+            timeout=60
+        )
+
+        if resposta.status_code != 200:
+            raise HTTPException(status_code=500, detail="Erro no robô")
+
+        retorno_rpa = resposta.json()
+
+        return retorno_rpa
+
+    except Exception as erro:
+        raise HTTPException(status_code=500, detail=str(erro))
+    
+# ----------------------------
+# BUSCAR HISTORICO
+# ----------------------------
+@app.get("/historico")
+def buscar_historico():
+
+    conn = conectar()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT id, produto, quantidade, movimentacao,
+               origem, destino, observacoes, data
+        FROM historico
+        ORDER BY id DESC
+    """)
+
+    resultado = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    dados = []
+
+    for r in resultado:
+        dados.append({
+            "produto_id": r[0],
+            "produto": r[1],
+            "quantidade": r[2],
+            "movimentacao": r[3],
+            "origem": r[4],
+            "destino": r[5],
+            "observacoes": r[6],
+            "data": r[7]
         })
-    return historico
 
-
+    return dados
 # ----------------------------
 # FRONTEND
 # ----------------------------
