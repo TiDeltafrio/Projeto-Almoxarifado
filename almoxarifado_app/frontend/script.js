@@ -377,41 +377,55 @@ const { jsPDF } = window.jspdf;
 
 const doc = new jsPDF();
 
+/* título */
+
 doc.setFontSize(16);
 doc.text("Histórico de Movimentações", 14, 15);
 
-let y = 30;
+/* colunas da tabela */
 
-/* usa os dados do histórico */
+const colunas = [
 
-historico.forEach(item => {
+"ID",
+"Produto",
+"Quantidade",
+"Movimentação",
+"Origem",
+"Destino",
+"Observações",
+"Data"
 
-doc.setFontSize(10);
+];
 
-doc.text(`Produto: ${item.produto}`, 14, y);
-y += 6;
+/* linhas */
 
-doc.text(`Quantidade: ${item.quantidade}`, 14, y);
-y += 6;
+const linhas = historico.map(item => [
 
-doc.text(`Movimentação: ${item.movimentacao}`, 14, y);
-y += 6;
+item.produto_id,
+item.produto,
+item.quantidade,
+item.movimentacao,
+item.origem,
+item.destino,
+item.observacoes,
+item.data
 
-doc.text(`Origem: ${item.origem}`, 14, y);
-y += 6;
+]);
 
-doc.text(`Destino: ${item.destino}`, 14, y);
-y += 6;
+/* gera tabela */
 
-doc.text(`Data: ${item.data}`, 14, y);
-y += 10;
+doc.autoTable({
 
-if(y > 270){
-doc.addPage();
-y = 20;
-}
+head: [colunas],
+body: linhas,
+startY: 25,
+theme: "grid",
+styles: { fontSize: 9 },
+headStyles: { fillColor: [44,62,80] }
 
 });
+
+/* salva */
 
 doc.save("historico_movimentacoes.pdf");
 
