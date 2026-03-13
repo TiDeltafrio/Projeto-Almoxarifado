@@ -81,6 +81,9 @@ document.getElementById("tituloPagina").innerText = "Movimentações";
 document.getElementById("btnPDF").style.display = "none";
 document.getElementById("btnEnviar").style.display = "inline-block";
 
+/* MOSTRA O BOTÃO */
+document.getElementById("btnNova").style.display = "inline-block";
+
 render();
 
 }
@@ -96,6 +99,9 @@ document.getElementById("tituloPagina").innerText = "Histórico";
 
 document.getElementById("btnPDF").style.display = "inline-block";
 document.getElementById("btnEnviar").style.display = "none";
+
+/* ESCONDE O BOTÃO */
+document.getElementById("btnNova").style.display = "none";
 
 /* não busca API */
 /* mostra apenas retorno do RPA */
@@ -362,5 +368,51 @@ document.getElementById("destino").value = dados.nome;
 console.error("Erro destino:", erro);
 
 }
+
+}
+
+function baixarPDF(){
+
+const { jsPDF } = window.jspdf;
+
+const doc = new jsPDF();
+
+doc.setFontSize(16);
+doc.text("Histórico de Movimentações", 14, 15);
+
+let y = 30;
+
+/* usa os dados do histórico */
+
+historico.forEach(item => {
+
+doc.setFontSize(10);
+
+doc.text(`Produto: ${item.produto}`, 14, y);
+y += 6;
+
+doc.text(`Quantidade: ${item.quantidade}`, 14, y);
+y += 6;
+
+doc.text(`Movimentação: ${item.movimentacao}`, 14, y);
+y += 6;
+
+doc.text(`Origem: ${item.origem}`, 14, y);
+y += 6;
+
+doc.text(`Destino: ${item.destino}`, 14, y);
+y += 6;
+
+doc.text(`Data: ${item.data}`, 14, y);
+y += 10;
+
+if(y > 270){
+doc.addPage();
+y = 20;
+}
+
+});
+
+doc.save("historico_movimentacoes.pdf");
 
 }
